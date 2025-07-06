@@ -28,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onConvertClick(View v) {
-        Spinner sp1 = (Spinner) findViewById(R.id.spinner);
+        Spinner sp1 = (Spinner) findViewById(R.id.spinnerFromUnit);
         String choice1 = sp1.getSelectedItem().toString();
 
-        Spinner sp2 = (Spinner) findViewById(R.id.spinner2);
+        Spinner sp2 = (Spinner) findViewById(R.id.spinnerToUnit);
         String choice2 = sp2.getSelectedItem().toString();
 
-        EditText ed1 = (EditText) findViewById(R.id.editTextNumberDecimal);
-        EditText ed2 = (EditText) findViewById(R.id.editTextNumberDecimal2);
+        EditText ed1 = (EditText) findViewById(R.id.editTextValue);
+        EditText ed2 = (EditText) findViewById(R.id.editTextResult);
 
         double value1 = Double.parseDouble(ed1.getText().toString());
         double value2 = 0;
