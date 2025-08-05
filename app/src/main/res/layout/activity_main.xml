@@ -84,7 +84,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextValue"
+                    android:id="@+id/inputNumberField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
@@ -104,7 +104,7 @@
                 app:hintTextColor="@color/primary_color">
 
                 <Spinner
-                    android:id="@+id/spinnerFromUnit"
+                    android:id="@+id/dropdownSourceUnit"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:entries="@array/length_units" />
@@ -116,7 +116,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
-                android:onClick="onConvertClick"
+                android:onClick="performUnitConversion"
                 android:text="CONVERT"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -147,7 +147,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextResult"
+                    android:id="@+id/outputDisplayField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:editable="false"
@@ -168,7 +168,7 @@
                 app:hintTextColor="@color/secondary_color">
 
                 <Spinner
-                    android:id="@+id/spinnerToUnit"
+                    android:id="@+id/dropdownTargetUnit"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:entries="@array/length_units" />

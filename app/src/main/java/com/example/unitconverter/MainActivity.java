@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,9 +12,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
-    EditText etConvertedValue;
+    private EditText resultDisplayField;
+    private EditText userInputField;
+    private Spinner sourceUnitDropdown;
+    private Spinner targetUnitDropdown;
+    
+    // Conversion factors to meters (base unit)
+    private final Map<String, Double> unitToMeterMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,91 +35,63 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        
+        initializeConversionFactors();
+        setupViewReferences();
     }
 
-    public void onConvertClick(View v) {
-        Spinner sp1 = (Spinner) findViewById(R.id.spinnerFromUnit);
-        String choice1 = sp1.getSelectedItem().toString();
+    private void initializeConversionFactors() {
+        unitToMeterMap.put("Meter", 1.0);
+        unitToMeterMap.put("Millimeter", 0.001);
+        unitToMeterMap.put("Mile", 1609.344);
+        unitToMeterMap.put("Foot", 0.3048);
+    }
+    
+    private void setupViewReferences() {
+        userInputField = findViewById(R.id.inputNumberField);
+        resultDisplayField = findViewById(R.id.outputDisplayField);
+        sourceUnitDropdown = findViewById(R.id.dropdownSourceUnit);
+        targetUnitDropdown = findViewById(R.id.dropdownTargetUnit);
+    }
 
-        Spinner sp2 = (Spinner) findViewById(R.id.spinnerToUnit);
-        String choice2 = sp2.getSelectedItem().toString();
-
-        EditText ed1 = (EditText) findViewById(R.id.editTextValue);
-        EditText ed2 = (EditText) findViewById(R.id.editTextResult);
-
-        double value1 = Double.parseDouble(ed1.getText().toString());
-        double value2 = 0;
-
-        switch (choice1) {
-            case "Meter":
-                switch (choice2) {
-                    case "Meter":
-                        value2 = value1;
-                        break;
-                    case "Millimeter":
-                        value2 = value1 * 1000;
-                        break;
-                    case "Mile":
-                        value2 = value1 * 0.000621371192;
-                        break;
-                    case "Foot":
-                        value2 = value1 * 3.2808399;
-                        break;
-                }
-                break;
-
-            case "Millimeter":
-                switch (choice2) {
-                    case "Meter":
-                        value2 = value1 / 1000;
-                        break;
-                    case "Millimeter":
-                        value2 = value1;
-                        break;
-                    case "Mile":
-                        value2 = value1 * 0.000000621371192;
-                        break;
-                    case "Foot":
-                        value2 = value1 * 0.0032808399;
-                        break;
-                }
-                break;
-
-            case "Mile":
-                switch (choice2) {
-                    case "Meter":
-                        value2 = value1 * 1609.344;
-                        break;
-                    case "Millimeter":
-                        value2 = value1 * 1609344;
-                        break;
-                    case "Mile":
-                        value2 = value1;
-                        break;
-                    case "Foot":
-                        value2 = value1 * 5280;
-                        break;
-                }
-                break;
-
-            case "Foot":
-                switch (choice2) {
-                    case "Meter":
-                        value2 = value1 * 0.3048;
-                        break;
-                    case "Millimeter":
-                        value2 = value1 * 304.8;
-                        break;
-                    case "Mile":
-                        value2 = value1 * 0.00018939394;
-                        break;
-                    case "Foot":
-                        value2 = value1;
-                        break;
-                }
-                break;
+    public void performUnitConversion(View clickedView) {
+        try {
+            String selectedSourceUnit = sourceUnitDropdown.getSelectedItem().toString();
+            String selectedTargetUnit = targetUnitDropdown.getSelectedItem().toString();
+            
+            String inputText = userInputField.getText().toString().trim();
+            if (inputText.isEmpty()) {
+                showErrorMessage("Please enter a value to convert");
+                return;
+            }
+            
+            double inputValue = Double.parseDouble(inputText);
+            double convertedResult = calculateConversion(inputValue, selectedSourceUnit, selectedTargetUnit);
+            
+            displayConversionResult(convertedResult);
+            
+        } catch (NumberFormatException exception) {
+            showErrorMessage("Invalid number format. Please enter a valid number.");
+        } catch (Exception exception) {
+            showErrorMessage("Conversion failed. Please try again.");
         }
-
-        ed2.setText(String.valueOf(value2));
+    }
+    
+    private double calculateConversion(double inputAmount, String fromUnit, String toUnit) {
+        // Convert input to meters first (base unit)
+        double valueInMeters = inputAmount * unitToMeterMap.get(fromUnit);
+        
+        // Convert from meters to target unit
+        double conversionFactor = unitToMeterMap.get(toUnit);
+        return valueInMeters / conversionFactor;
+    }
+    
+    private void displayConversionResult(double result) {
+        String formattedResult = String.format("%.6f", result);
+        resultDisplayField.setText(formattedResult);
+    }
+    
+    private void showErrorMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
